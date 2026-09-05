@@ -1,0 +1,57 @@
+[
+  {
+    "id": "epfo-faq",
+    "title": "EPFO FAQ",
+    "organization": "EPFO",
+    "document_type": "FAQ",
+    "section": "",
+    "page": "",
+    "url": "https://epfindia.gov.in/site_en/FAQ.php",
+    "categories": ["EXIT_DATE_OVERLAP", "FORM_15G_PAN", "KYC_PENDING", "BANK_IFSC_MISMATCH"],
+    "keywords": ["exit", "claim", "PAN", "KYC", "bank", "tax"]
+  },
+  {
+    "id": "epfo-jd-sop",
+    "title": "SOP_WSU_new.pdf",
+    "organization": "EPFO",
+    "document_type": "SOP",
+    "section": "",
+    "page": "",
+    "url": "https://www.epfindia.gov.in/site_docs/PDFs/Circulars/Y2023-2024/SOP_WSU_new.pdf",
+    "categories": ["NAME_DOB_MISMATCH", "AADHAAR_UAN_MISMATCH", "KYC_PENDING", "EXIT_DATE_OVERLAP"],
+    "keywords": ["joint declaration", "name", "date of birth", "aadhaar", "correction", "employer"]
+  },
+  {
+    "id": "epfo-jd-circular",
+    "title": "Circular_WSU_01082024.pdf",
+    "organization": "EPFO",
+    "document_type": "Circular",
+    "section": "",
+    "page": "",
+    "url": "https://www.epfindia.gov.in/site_docs/PDFs/Circulars/Y2024-2025/Circular_WSU_01082024.pdf",
+    "categories": ["NAME_DOB_MISMATCH", "AADHAAR_UAN_MISMATCH"],
+    "keywords": ["joint declaration", "name", "date of birth", "aadhaar"]
+  },
+  {
+    "id": "epfo-members-faq",
+    "title": "MembersFAQ.pdf",
+    "organization": "EPFO",
+    "document_type": "FAQ",
+    "section": "",
+    "page": "",
+    "url": "https://epfindia.gov.in/site_docs/PDFs/OTCP_PDFs/MembersFAQ.pdf",
+    "categories": ["EXIT_DATE_OVERLAP", "EPS_WAGE_SERVICE"],
+    "keywords": ["date of exit", "employment", "pension", "service", "transfer"]
+  },
+  {
+    "id": "epfo-ocs-faq",
+    "title": "FAQ_OCS_050517_1017.pdf",
+    "organization": "EPFO",
+    "document_type": "FAQ",
+    "section": "",
+    "page": "",
+    "url": "https://www.epfindia.gov.in/site_docs/PDFs/MiscPDFs/FAQ_OCS_050517_1017.pdf",
+    "categories": ["FORM_15G_PAN", "EPS_WAGE_SERVICE"],
+    "keywords": ["PAN", "15G", "service", "settlement", "tax"]
+  }
+]

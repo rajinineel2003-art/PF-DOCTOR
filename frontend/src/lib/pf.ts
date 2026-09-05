@@ -12,14 +12,17 @@ export type PipelineStatus = "PENDING" | "RUNNING" | "SUCCESS" | "FAILED" | "SKI
 export type AnalysisMode = "live" | "demo";
 
 export interface Source {
-  id: string;
+  document_id: string;
   title: string;
-  organization: string;
+  issuing_authority: string;
   document_type: string;
+  date: string;
+  version: string;
   section: string;
   page: string;
-  url: string;
-  relevance: number;
+  relevant_excerpt: string;
+  official_url: string;
+  relevance_score: number;
 }
 
 export interface PipelineStage {
@@ -39,6 +42,8 @@ export interface ActionStep {
   step: number;
   action: string;
   responsible_party: "employee" | "employer" | "EPFO" | "unknown";
+  documents_needed: string[];
+  source_ids: string[];
 }
 
 export interface AnalysisResult {
@@ -51,6 +56,7 @@ export interface AnalysisResult {
   facts_detected: string[];
   recommended_actions: ActionStep[];
   documents_needed: string[];
+  document_assistant: DocumentSuggestion[];
   confidence: Confidence;
   sources: Source[];
   uncertainties: string[];
@@ -59,6 +65,7 @@ export interface AnalysisResult {
   pii_masked: boolean;
   pipeline: PipelineStage[];
   source_notice: string;
+  knowledge_status: "RETRIEVED" | "NO_RELEVANT_SOURCE" | "NOT_CONFIGURED";
 }
 
 export interface MaskResponse {
@@ -68,11 +75,57 @@ export interface MaskResponse {
 }
 
 export interface OcrResponse {
-  status: "SUCCESS" | "NOT_CONFIGURED" | "FAILED";
-  text: string;
-  quality: "HIGH" | "MEDIUM" | "LOW" | null;
+  status: "SUCCESS" | "NOT_CONFIGURED" | "OCR_FAILED";
+  extracted_text: string;
+  extraction_status: "SUCCESS" | "NOT_CONFIGURED" | "OCR_FAILED";
+  extraction_confidence: "HIGH" | "MEDIUM" | "LOW" | "UNAVAILABLE";
   warnings: string[];
   pipeline: PipelineStage[];
+}
+
+export interface DocumentSuggestion {
+  name: string;
+  why_relevant: string;
+  information_required: string[];
+  official_source: string;
+  requires_human_verification: boolean;
+}
+
+export interface ConfigResponse {
+  gemini_configured: boolean;
+  knowledge_base_configured: boolean;
+  translation_available: boolean;
+}
+
+export interface TamilAction {
+  step: number;
+  action: string;
+  responsible_party: "employee" | "employer" | "EPFO" | "unknown";
+  documents_needed: string[];
+}
+
+export interface TamilTranslation {
+  issue_title: string;
+  plain_language_explanation: string;
+  why_this_matches: string[];
+  facts_detected: string[];
+  recommended_actions: TamilAction[];
+  documents_needed: string[];
+  uncertainties: string[];
+  source_explanation: string;
+}
+
+export interface FeedbackRequest {
+  category: Category;
+  helpful: boolean;
+  feedback_text: string;
+  app_version: string;
+  technical_status: string;
+}
+
+export interface FeedbackResponse {
+  status: "RECORDED";
+  message: string;
 }
 
 export const CATEGORY_LABELS: Record<Category, { en: string; ta: string }> = {

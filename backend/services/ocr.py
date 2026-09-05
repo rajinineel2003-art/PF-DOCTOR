@@ -16,17 +16,17 @@ async def ocr_image(content_type: str, image_bytes: bytes) -> OcrResponse:
     ]
     if content_type not in ALLOWED_TYPES:
         stages[0] = stages[0].model_copy(update={"status": "FAILED", "detail": "Supported formats: PNG, JPG, JPEG, WEBP."})
-        return OcrResponse(status="FAILED", warnings=["Unsupported image type. Please upload PNG, JPG, JPEG, or WEBP."], pipeline=stages)
+        return OcrResponse(status="OCR_FAILED", extraction_status="OCR_FAILED", warnings=["Unsupported image type. Please upload PNG, JPG, JPEG, or WEBP."], pipeline=stages)
     if len(image_bytes) > MAX_BYTES:
         stages[0] = stages[0].model_copy(update={"status": "FAILED", "detail": "Image exceeds the 8 MB limit."})
-        return OcrResponse(status="FAILED", warnings=["Image is too large. Please upload an image under 8 MB."], pipeline=stages)
+        return OcrResponse(status="OCR_FAILED", extraction_status="OCR_FAILED", warnings=["Image is too large. Please upload an image under 8 MB."], pipeline=stages)
     try:
         text, quality, warnings = await extract_text_with_llm(content_type, image_bytes)
-        stages[0] = stages[0].model_copy(update={"status": "SUCCESS", "detail": f"Vision extraction returned {quality} quality text."})
-        return OcrResponse(status="SUCCESS", text=text, quality=quality, warnings=warnings, pipeline=stages)
+        stages[0] = stages[0].model_copy(update={"status": "SUCCESS", "detail": "Vision extraction returned user-reviewable text."})
+        return OcrResponse(status="SUCCESS", extracted_text=text, extraction_status="SUCCESS", extraction_confidence=quality, warnings=warnings, pipeline=stages)
     except NotConfiguredError as exc:
         stages[0] = stages[0].model_copy(update={"status": "NOT_CONFIGURED", "detail": str(exc)})
-        return OcrResponse(status="NOT_CONFIGURED", warnings=[str(exc)], pipeline=stages)
+        return OcrResponse(status="NOT_CONFIGURED", extraction_status="NOT_CONFIGURED", warnings=[str(exc)], pipeline=stages)
     except LlmAnalysisError as exc:
         stages[0] = stages[0].model_copy(update={"status": "FAILED", "detail": str(exc)})
-        return OcrResponse(status="FAILED", warnings=[str(exc)], pipeline=stages)
+        return OcrResponse(status="OCR_FAILED", extraction_status="OCR_FAILED", warnings=[str(exc)], pipeline=stages)

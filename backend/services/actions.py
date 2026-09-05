@@ -1,4 +1,4 @@
-from models.analysis import ActionStep, Category
+from models.analysis import ActionStep, Category, DocumentSuggestion, Source
 
 
 ACTION_PLANS: dict[Category, tuple[list[tuple[str, str]], list[str]]] = {
@@ -44,6 +44,29 @@ ACTION_PLANS: dict[Category, tuple[list[tuple[str, str]], list[str]]] = {
 }
 
 
-def build_action_plan(category: Category) -> tuple[list[ActionStep], list[str]]:
+def build_action_plan(category: Category, sources: list[Source] | None = None) -> tuple[list[ActionStep], list[str], list[DocumentSuggestion]]:
     actions, documents = ACTION_PLANS[category]
-    return [ActionStep(step=index, action=action, responsible_party=party) for index, (action, party) in enumerate(actions, 1)], documents
+    available_sources = sources or []
+    source_ids = [source.document_id for source in available_sources if source.document_id]
+    source_url = available_sources[0].official_url if available_sources else ""
+    steps = [
+        ActionStep(
+            step=index,
+            action=action,
+            responsible_party=party,
+            documents_needed=documents[:2] if index == 1 else documents[1:2],
+            source_ids=source_ids[:2],
+        )
+        for index, (action, party) in enumerate(actions, 1)
+    ]
+    suggestions = [
+        DocumentSuggestion(
+            name=document,
+            why_relevant=f"This may help verify or resolve the {category.replace('_', ' ').lower()} signal.",
+            information_required=[document],
+            official_source=source_url,
+            requires_human_verification=True,
+        )
+        for document in documents
+    ]
+    return steps, documents, suggestions

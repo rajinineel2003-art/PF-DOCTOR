@@ -21,10 +21,10 @@ def demo_result(case: str, text: str) -> AnalysisDraft:
     category, title, explanation = DEMO_CASES.get(case, DEMO_CASES["unknown"])
     signals = detect_rule_signals(text)
     sources = retrieve_knowledge(text, signals)
-    actions, documents = build_action_plan(category)
+    actions, documents, document_assistant = build_action_plan(category, sources)
     facts = [signal.evidence for signal in signals[:3]] or ["No deterministic signal was detected in this demo wording."]
     why = [f"Demo input contains wording associated with {title}."] if category != "UNKNOWN" else ["Demo input is intentionally ambiguous."]
-    confidence = calculate_confidence(text, signals, len(sources), category, bool(signals), False)
+    confidence = calculate_confidence(text, signals, [source.relevance_score for source in sources], category, bool(signals), False)
     confidence.reason = "Demo result uses a predefined example; its score is derived from the example text and retrieved source records, not a calibrated probability."
     return AnalysisDraft(
         category=category,
@@ -34,6 +34,7 @@ def demo_result(case: str, text: str) -> AnalysisDraft:
         facts_detected=facts,
         recommended_actions=actions,
         documents_needed=documents,
+        document_assistant=document_assistant,
         confidence=confidence,
         sources=sources,
         uncertainties=["Demo Mode uses a predefined example and does not analyze a real claim.", "Always verify current instructions through official EPFO channels."],

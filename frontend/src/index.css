@@ -96,6 +96,7 @@
 .action-number { @apply font-mono text-xs font-bold text-emerald-700; }
 .source-link { @apply inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-900; }
 .method-card { @apply rounded-xl border border-slate-200 bg-white p-5 shadow-sm; }
+.print-only { display: none; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
-@media print { header, footer, #how-it-works, #supported-issues, #workbench > div:first-of-type, .result-empty, button { display: none !important; } body, main, .print-report { background: white !important; color: black !important; } .print-report { display: block !important; } }
+@media print { header, footer, #how-it-works, #supported-issues, #workbench > div:first-of-type, .result-empty, button, [data-testid="feedback-card"] { display: none !important; } body, main, .print-report { background: white !important; color: black !important; } .print-report, .print-only { display: block !important; } .print-only { margin-bottom: 20px; } .print-only h1 { font-size: 24px; font-weight: 700; } .print-only h2 { margin-top: 16px; font-size: 14px; font-weight: 700; } .print-only p { margin-top: 6px; white-space: pre-wrap; font-size: 12px; line-height: 1.5; } }

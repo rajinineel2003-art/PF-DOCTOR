@@ -2,6 +2,7 @@ services:
   - type: web
     name: pf-doctor
     runtime: docker
+    plan: free
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/config
     envVars:

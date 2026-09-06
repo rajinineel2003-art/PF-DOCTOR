@@ -6,7 +6,7 @@ from models.analysis import AnalyzeRequest, AnalyzeResponse, ConfigResponse, Err
 from services.analysis import AnalysisServiceError, analyze_text
 from services.feedback import record_feedback
 from services.knowledge import knowledge_base_configured
-from services.llm import LlmAnalysisError, NotConfiguredError, translate_result
+from services.llm import LlmAnalysisError, NotConfiguredError, RateLimitedError, translate_result
 from services.ocr import ocr_image
 from services.pii import mask_pii
 from services.rate_limit import enforce_rate_limit
@@ -40,7 +40,8 @@ async def analyze_rejection(payload: AnalyzeRequest, request: Request) -> Analyz
     try:
         return await analyze_text(payload.text, payload.mode)
     except AnalysisServiceError as exc:
-        raise HTTPException(status_code=503 if exc.status == "NOT_CONFIGURED" else 502, detail={"status": exc.status, "message": exc.message, "pipeline": [stage.model_dump() for stage in exc.pipeline]}) from exc
+        status_code = 429 if exc.status == "RATE_LIMITED" else 503 if exc.status == "NOT_CONFIGURED" else 502
+        raise HTTPException(status_code=status_code, detail={"status": exc.status, "message": exc.message, "pipeline": [stage.model_dump() for stage in exc.pipeline]}) from exc
 
 
 @router.post("/translate-result", response_model=TranslationResponse, responses={503: {"model": ErrorResponse}, 502: {"model": ErrorResponse}})
@@ -50,6 +51,8 @@ async def translate(payload: TranslationRequest, request: Request) -> Translatio
         return TranslationResponse(status="SUCCESS", translation=await translate_result(payload.diagnosis))
     except NotConfiguredError as exc:
         raise HTTPException(status_code=503, detail={"status": "NOT_CONFIGURED", "message": str(exc)}) from exc
+    except RateLimitedError as exc:
+        raise HTTPException(status_code=429, detail={"status": "RATE_LIMITED", "message": str(exc)}) from exc
     except LlmAnalysisError as exc:
         raise HTTPException(status_code=502, detail={"status": "TRANSLATION_ERROR", "message": str(exc)}) from exc
 

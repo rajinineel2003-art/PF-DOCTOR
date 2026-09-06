@@ -3,7 +3,7 @@ from services.actions import build_action_plan
 from services.confidence import calculate_confidence
 from services.demo import DEMO_CASES, demo_result
 from services.knowledge import knowledge_base_configured, retrieve_knowledge
-from services.llm import LlmAnalysisError, NotConfiguredError, analyze_with_llm
+from services.llm import LlmAnalysisError, NotConfiguredError, RateLimitedError, analyze_with_llm
 from services.pii import mask_pii
 from services.rules import detect_rule_signals
 
@@ -66,6 +66,9 @@ async def analyze_text(text: str, mode: str) -> AnalyzeResponse:
     except NotConfiguredError as exc:
         pipeline[5] = pipeline[5].model_copy(update={"status": "NOT_CONFIGURED", "detail": "Live AI is not configured. Add GEMINI_API_KEY on the server."})
         raise AnalysisServiceError("NOT_CONFIGURED", str(exc), pipeline) from exc
+    except RateLimitedError as exc:
+        pipeline[5] = pipeline[5].model_copy(update={"status": "RATE_LIMITED", "detail": "Gemini reasoning: RATE_LIMITED"})
+        raise AnalysisServiceError("RATE_LIMITED", str(exc), pipeline) from exc
     except LlmAnalysisError as exc:
         pipeline[5] = pipeline[5].model_copy(update={"status": "FAILED", "detail": "AI_ERROR: the Gemini response could not be validated."})
         raise AnalysisServiceError("AI_ERROR", str(exc), pipeline) from exc

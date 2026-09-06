@@ -1,5 +1,5 @@
 from models.analysis import OcrResponse, PipelineStage
-from services.llm import LlmAnalysisError, NotConfiguredError, extract_text_with_llm
+from services.llm import LlmAnalysisError, NotConfiguredError, RateLimitedError, extract_text_with_llm
 
 
 ALLOWED_TYPES = {"image/png", "image/jpeg", "image/webp"}
@@ -27,6 +27,9 @@ async def ocr_image(content_type: str, image_bytes: bytes) -> OcrResponse:
     except NotConfiguredError as exc:
         stages[0] = stages[0].model_copy(update={"status": "NOT_CONFIGURED", "detail": str(exc)})
         return OcrResponse(status="NOT_CONFIGURED", extraction_status="NOT_CONFIGURED", warnings=[str(exc)], pipeline=stages)
+    except RateLimitedError as exc:
+        stages[0] = stages[0].model_copy(update={"status": "RATE_LIMITED", "detail": "Gemini vision: RATE_LIMITED"})
+        return OcrResponse(status="RATE_LIMITED", extraction_status="RATE_LIMITED", warnings=[str(exc)], pipeline=stages)
     except LlmAnalysisError as exc:
         stages[0] = stages[0].model_copy(update={"status": "FAILED", "detail": str(exc)})
         return OcrResponse(status="OCR_FAILED", extraction_status="OCR_FAILED", warnings=[str(exc)], pipeline=stages)

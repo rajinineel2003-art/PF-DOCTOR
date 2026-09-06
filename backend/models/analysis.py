@@ -13,7 +13,7 @@ Category = Literal[
     "EPS_WAGE_SERVICE",
     "UNKNOWN",
 ]
-PipelineStatus = Literal["PENDING", "RUNNING", "SUCCESS", "FAILED", "SKIPPED", "NOT_CONFIGURED"]
+PipelineStatus = Literal["PENDING", "RUNNING", "SUCCESS", "FAILED", "SKIPPED", "NOT_CONFIGURED", "RATE_LIMITED"]
 AnalysisMode = Literal["live", "demo"]
 ResponsibleParty = Literal["employee", "employer", "EPFO", "unknown"]
 KnowledgeStatus = Literal["RETRIEVED", "NO_RELEVANT_SOURCE", "NOT_CONFIGURED"]
@@ -93,7 +93,7 @@ class AnalyzeResponse(AnalysisDraft):
 
 
 class ErrorResponse(BaseModel):
-    status: Literal["NOT_CONFIGURED", "AI_ERROR", "OCR_FAILED", "TRANSLATION_ERROR", "ERROR"]
+    status: Literal["NOT_CONFIGURED", "RATE_LIMITED", "AI_ERROR", "OCR_FAILED", "TRANSLATION_ERROR", "ERROR"]
     message: str
     pipeline: list[PipelineStage] = Field(default_factory=list)
 
@@ -109,9 +109,9 @@ class MaskResponse(BaseModel):
 
 
 class OcrResponse(BaseModel):
-    status: Literal["SUCCESS", "NOT_CONFIGURED", "OCR_FAILED"]
+    status: Literal["SUCCESS", "NOT_CONFIGURED", "RATE_LIMITED", "OCR_FAILED"]
     extracted_text: str = ""
-    extraction_status: Literal["SUCCESS", "NOT_CONFIGURED", "OCR_FAILED"]
+    extraction_status: Literal["SUCCESS", "NOT_CONFIGURED", "RATE_LIMITED", "OCR_FAILED"]
     extraction_confidence: Literal["HIGH", "MEDIUM", "LOW", "UNAVAILABLE"] = "UNAVAILABLE"
     warnings: list[str] = Field(default_factory=list)
     pipeline: list[PipelineStage] = Field(default_factory=list)

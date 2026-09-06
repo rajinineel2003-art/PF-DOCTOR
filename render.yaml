@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: pf-doctor
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/config
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3-flash-preview
+      - key: CORS_ORIGINS
+        sync: false

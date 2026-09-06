@@ -1,0 +1,20 @@
+{
+  "iteration": 1,
+  "passed": 10,
+  "failed": 0,
+  "bugs": [],
+  "action_items": [],
+  "retest_needed": false,
+  "checks": [
+    {"criterion":"Basic PII masking runs through the backend before analysis","name":"test_tscheck_pii_masking.py","lane":"backend","status":"passed","evidence":"POST /api/mask-preview returned 200; UAN_REDACTED and EMAIL_REDACTED appeared while rejection wording remained."},
+    {"criterion":"Live AI does not fake success when Gemini is unavailable; input validation is enforced","name":"test_tscheck_live_validation.py","lane":"backend","status":"passed","evidence":"POST /api/analyze-rejection live returned 503 with NOT_CONFIGURED; empty text returned 422."},
+    {"criterion":"Screenshot upload is honest about OCR configuration","name":"test_tscheck_ocr_honesty.py","lane":"backend","status":"passed","evidence":"POST /api/ocr returned 200 with NOT_CONFIGURED/empty text and manual-paste/configuration warning."},
+    {"criterion":"A user can use clearly labelled Demo Mode and receive a structured result","name":"demo-analysis-structured-result","lane":"browser","status":"passed","evidence":"Name / DOB sample produced DEMO result with category, evidence, action, document, uncertainty, confidence, 3 official source links, and predefined-example notice."},
+    {"criterion":"Live AI does not fake success when Gemini is unavailable; Judge Mode reflects real state","name":"live-ai-not-configured","lane":"browser","status":"passed","evidence":"Live submission showed visible not configured error and Judge Mode AI stage showed Not configured; expected 503 console entry observed."},
+    {"criterion":"Screenshot upload is honest about OCR configuration","name":"ocr-configuration-honesty","lane":"browser","status":"passed","evidence":"Allowed image upload showed OCR / vision NOT_CONFIGURED and paste/configuration guidance without inserting text."},
+    {"criterion":"English/Tamil presentation toggle works","name":"language-toggle-result-headings","lane":"browser","status":"passed","evidence":"Result headings changed to Tamil and returned to English; category title also changed."},
+    {"criterion":"Printable guidance and browser speech controls exist","name":"print-and-browser-speech-controls","lane":"browser","status":"passed","evidence":"Print control invoked window.print and Browser speech invoked speechSynthesis after demo result."},
+    {"criterion":"Input validation is surfaced","name":"empty-input-validation","lane":"browser","status":"passed","evidence":"Empty analysis displayed useful paste/upload validation error and no result."},
+    {"criterion":"PII masking preview is surfaced before analysis","name":"pii-masking-preview","lane":"browser","status":"passed","evidence":"Preview displayed UAN_REDACTED and EMAIL_REDACTED while preserving ordinary rejection wording."}
+  ]
+}

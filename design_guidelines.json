@@ -1,0 +1,84 @@
+{
+  "app_info": {
+    "name": "PF Doctor",
+    "version": "4.1",
+    "app_type": "hybrid_fullstack",
+    "persona": "Calm Civic Fintech AI Assistant for EPFO Claim Rejection Diagnostic"
+  },
+  "instructions_to_main_agent": [
+    "Preserve all required user choices: PF Doctor branding, calm civic/fintech visual language, upload screenshot interface, paste rejection text interface, result dashboard, issue category, explanation, next steps, checklist, Tamil/English bilingual experience, Judge Mode, Demo Mode, print/save guidance, and responsive design.",
+    "Prioritize truthful system-state communication over decorative simulation. Do not fake OCR, AI reasoning, knowledge retrieval, confidence scoring, source verification, or Judge Mode pipeline stages.",
+    "Support both React TypeScript (.tsx) component structure present in /app/frontend and backend endpoints.",
+    "Ensure all interactive and key informational elements feature a data-testid attribute in kebab-case format.",
+    "Ensure color contrast meets WCAG AA standards with minimum 4.5:1 ratio for standard text and 3:1 for large/bold headers.",
+    "Never use pure transparent backgrounds for sticky headers or dropdown overlays; always provide backdrop blur and frosted surface colors (e.g. bg-emerald-950/90 or bg-slate-900/90)."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": {
+    "anti_slop_rules": "Avoid generic Vercel/Stripe blue-purple gradients, generic cards, and hardcoded fake progress bars. Use civic emerald/forest palette with structured, high-density data layouts.",
+    "spacing": "Generous spacing scale using Tailwind p-4, p-6, p-8, p-12. Containers with borders must have internal padding (minimum p-6) to prevent text collision.",
+    "typography": "Use Geist Variable or Instrument Sans for headings with tight letter-spacing (tracking-tight), paired with clean monospace for code, UAN, and confidence scores.",
+    "test_attributes": "All key interactive buttons, inputs, toggles, badges, and diagnostic metrics must include distinct data-testid values (e.g., data-testid='upload-screenshot-input', data-testid='analyze-rejection-button', data-testid='judge-mode-toggle')."
+  },
+  "typography": {
+    "font_family_heading": "Geist Variable, Instrument Sans, sans-serif",
+    "font_family_body": "Geist Variable, Inter, sans-serif",
+    "font_family_mono": "Geist Mono, JetBrains Mono, monospace",
+    "hierarchy": {
+      "h1_hero": "text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-emerald-50",
+      "h2_section": "text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight text-slate-800 dark:text-emerald-100",
+      "h3_card": "text-lg sm:text-xl font-medium text-slate-800 dark:text-emerald-200",
+      "body_main": "text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300",
+      "caption_mono": "text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400"
+    }
+  },
+  "colors": {
+    "theme_type": "Civic Emerald & Slate Balance (Light/Dark Toggle)",
+    "palette": {
+      "primary": "#059669",
+      "primary_hover": "#047857",
+      "primary_dark": "#10b981",
+      "background_light": "#f8fafc",
+      "background_dark": "#064e3b",
+      "surface_light": "#ffffff",
+      "surface_dark": "#022c22",
+      "border_light": "#e2e8f0",
+      "border_dark": "#065f46",
+      "accent_amber": "#d97706",
+      "accent_red": "#dc2626",
+      "accent_blue": "#2563eb",
+      "text_main": "#0f172a",
+      "text_muted": "#475569"
+    }
+  },
+  "grids_and_layouts": {
+    "hero_workbench": "grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start",
+    "input_section_span": "col-span-12 lg:col-span-5 flex flex-col gap-6",
+    "result_dashboard_span": "col-span-12 lg:col-span-7 flex flex-col gap-6",
+    "bento_metrics": "grid grid-cols-1 sm:grid-cols-3 gap-4"
+  },
+  "component_states": {
+    "upload_dropzone": {
+      "default": "border-2 border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/50 dark:bg-emerald-950/30 p-8 rounded-xl text-center hover:border-emerald-500 transition-colors",
+      "dragging": "border-2 border-dashed border-emerald-600 bg-emerald-100/70 dark:bg-emerald-900/50"
+    },
+    "judge_mode_pipeline": {
+      "PENDING": "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-slate-300",
+      "RUNNING": "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border-amber-400 animate-pulse",
+      "SUCCESS": "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-500",
+      "FAILED": "bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300 border-red-500",
+      "NOT_CONFIGURED": "bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border-purple-400"
+    }
+  },
+  "image_urls": [
+    {
+      "category": "hero_rupee_symbol",
+      "url": "https://images.unsplash.com/photo-1748335353650-989cd6fccb68?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHw3fHxlcGZvJTIwaW5kaWElMjBnb3Zlcm5tZW50JTIwc2VhbCUyMGxvZ28lMjBjaXZpYyUyMGZpbnRlY2glMjBvZmZpY2lhbCUyMHNoaWVsZHxlbnwwfHx8fDE3ODg2MDM5OTF8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Golden Rupee symbol monument conveying Indian official civic financial trust"
+    }
+  ],
+  "accessibility": {
+    "apca_contrast": "Minimum 4.5:1 for body copy against light/dark background surfaces",
+    "reduced_motion": "Wrap non-essential motion elements with prefers-reduced-motion queries or static fallback",
+    "bilingual_support": "Full English & Tamil key translations for headers, categories, checklists, and Judge Mode stages"
+  }
+}

@@ -1,10 +1,12 @@
-FROM node:22-alpine AS frontend-build
+FROM node:22.14.0-alpine AS frontend-build
 
 WORKDIR /app/frontend
-COPY frontend/package.json ./
-RUN npm install --no-audit --no-fund
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN corepack enable \
+    && corepack prepare pnpm@11.19.0 --activate \
+    && pnpm install --frozen-lockfile
 COPY frontend/ ./
-RUN npm run build
+RUN pnpm run build
 
 FROM python:3.12-slim AS runtime
 

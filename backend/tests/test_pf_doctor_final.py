@@ -7,6 +7,7 @@ honest NOT_CONFIGURED boundary until GEMINI_API_KEY is supplied.
 
 import io
 import json
+from types import SimpleNamespace
 
 import httpx
 import pytest
@@ -49,6 +50,36 @@ def test_safe_json_diagnostic_omits_raw_content():
     diagnostic = _safe_diagnostic(captured.value)
     assert diagnostic.startswith("JSONDecodeError:")
     assert "secret-marker" not in diagnostic
+
+
+def test_structured_generation_uses_native_non_streaming_parser():
+    """INPUT: SDK-native parsed diagnosis. EXPECTED: non-streaming result is returned as the schema model."""
+    import asyncio
+
+    from models.analysis import AnalysisDraft
+    from services.llm import _generate_structured
+
+    parsed = AnalysisDraft.model_validate({
+        "category": "UNKNOWN",
+        "issue_title": "Needs review",
+        "plain_language_explanation": "The rejection reason is unclear.",
+        "why_this_matches": ["The supplied text lacks a specific reason."],
+        "facts_detected": ["A claim was rejected."],
+        "recommended_actions": [{"step": 1, "action": "Verify the rejection message.", "responsible_party": "unknown"}],
+        "documents_needed": [],
+        "confidence": {"level": "low", "score": 20, "reason": "Insufficient evidence."},
+        "sources": [],
+        "uncertainties": ["The exact reason is unknown."],
+        "requires_human_verification": True,
+    })
+
+    class Models:
+        async def generate_content(self, **_kwargs):
+            return SimpleNamespace(parsed=parsed, text=None)
+
+    client = SimpleNamespace(aio=SimpleNamespace(models=Models()))
+    actual = asyncio.run(_generate_structured(client, "synthetic", "guard", AnalysisDraft))
+    assert actual is parsed
 
 
 @pytest.mark.parametrize(

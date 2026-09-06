@@ -63,6 +63,31 @@ async def _stream_text(
     return "".join(parts).strip()
 
 
+async def _generate_structured(
+    client: genai.Client,
+    contents: Any,
+    system_instruction: str,
+    response_schema: type[BaseModel],
+) -> BaseModel:
+    """Use Gemini's native, non-streaming structured response parser."""
+    response = await client.aio.models.generate_content(
+        model=_model_name(),
+        contents=contents,
+        config=types.GenerateContentConfig(
+            system_instruction=system_instruction,
+            response_mime_type="application/json",
+            response_schema=response_schema,
+        ),
+    )
+    if isinstance(response.parsed, response_schema):
+        return response.parsed
+    if response.parsed is not None:
+        return response_schema.model_validate(response.parsed)
+    if response.text:
+        return response_schema.model_validate_json(response.text)
+    raise ValueError("Gemini returned no structured response")
+
+
 def _safe_diagnostic(exc: Exception) -> str:
     """Describe structured-output failures without logging prompts or model output."""
     if isinstance(exc, ValidationError):
@@ -124,8 +149,8 @@ async def analyze_with_llm(masked_text: str, signal_text: str, sources: list[Sou
     for attempt in range(2):
         try:
             client = _client()
-            raw = await asyncio.wait_for(
-                _stream_text(
+            draft = await asyncio.wait_for(
+                _generate_structured(
                     client,
                     _prompt(masked_text, signal_text, sources, attempt == 1),
                     SYSTEM_PROMPT,
@@ -133,8 +158,7 @@ async def analyze_with_llm(masked_text: str, signal_text: str, sources: list[Sou
                 ),
                 timeout=45,
             )
-            draft = AnalysisDraft.model_validate(_json_object(raw))
-            return draft
+            return AnalysisDraft.model_validate(draft)
         except NotConfiguredError:
             raise
         except Exception as exc:
@@ -191,8 +215,8 @@ Return JSON only with this shape:
     for attempt in range(2):
         try:
             client = _client()
-            raw = await asyncio.wait_for(
-                _stream_text(
+            translation = await asyncio.wait_for(
+                _generate_structured(
                     client,
                     prompt + (" Return every required field as JSON." if attempt else ""),
                     TRANSLATION_SYSTEM_PROMPT,
@@ -200,7 +224,7 @@ Return JSON only with this shape:
                 ),
                 timeout=45,
             )
-            return TamilTranslation.model_validate(_json_object(raw))
+            return TamilTranslation.model_validate(translation)
         except NotConfiguredError:
             raise
         except Exception as exc:
